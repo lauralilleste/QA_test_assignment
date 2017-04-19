@@ -14,7 +14,7 @@ For Windows:
 app.py
 test.py
 ```
-## Assignement
+## Assignment
 Fork this repository. Clone forked repo to your local machine.
 The task is to cover with unit tests both classes - `BankAccount` and `Transaction`. Write your tests in `test.py` file. Try to achive reasonable coverage (~90%). Third-party service call should be mocked out.
 Push your changes back to forked repository.
