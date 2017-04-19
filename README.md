@@ -1,4 +1,4 @@
-# Test assignement for the QA engineer position
+# Test assignment for the QA engineer position
 ## Application
 The system under test is a simple command line application. It consists of two classes `BankAccount` and `Transaction`. 
 The user is prompted to create a bank account by specifying amount of available funds. After the account is created user can choose between three options: add funds to the account, withdraw founds from the account or list account's transactions. Transaction object is created every time when user perform an action with the BankAccount object (add or withdraw funds). Transaction object has following fields: timestamp, ip address of a user, initial and final amound of funds and the difference. User's IP is obtained with the third-party service call over http. 
@@ -9,7 +9,7 @@ For Linux:
 python app.py
 python test.py
 ```
-For Windows (probably need to install `requests` module as will, use `pip install requests`):
+For Windows (probably need to install `requests` module as well, use `pip install requests`):
 ```
 app.py
 test.py
