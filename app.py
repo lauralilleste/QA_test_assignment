@@ -3,9 +3,7 @@ import json
 import datetime
 
 class BankAccount(object):
-    """
-    This class 
-    """
+
     def __init__(self, amount):
         if amount < 0:
             raise ValueError("Amount can not be negative")
