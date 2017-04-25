@@ -1,9 +1,13 @@
 import unittest
 import app
+from mock import patch
+import sys
+from StringIO import StringIO
 
 class TestBankAccount(unittest.TestCase):
     
     def setUp(self):
+        
         pass
 
     def test_create_account_successful(self):
@@ -90,10 +94,10 @@ class TestBankAccount(unittest.TestCase):
     def test_transaction_successful_ip(self):
         self.a=app.Transaction(2,4)
         init_timestamp=app.datetime.datetime.now()
-        self.IP_SERVICE_REQUEST_URL = "http://ip.jsontest.com/"
+        self.IP_SERVICE_REQUEST_URL = "http://jsonplaceholder.typicode.com/posts/1"
         response=app.requests.get(self.IP_SERVICE_REQUEST_URL)
-        ip=app.json.loads(response.content)["ip"]
-        self.assertEqual(self.a.ip_address,ip)           
+        ip=app.json.loads(response.content)["userId"]
+        self.assertEqual(self.a.user_id,ip)           
         
     def test_transaction_values(self):
         self.a=app.Transaction(2,4)
@@ -129,38 +133,56 @@ class TestBankAccount(unittest.TestCase):
         self.assertEqual(self.a.final_amount,0)
         self.assertEqual(self.a.difference,0)
         
-    
-
-    # TODO str
-    '''def test_transaction_str(self):
+    def test_transaction_str(self):
         self.a=app.Transaction(4,2)
         init_timestamp=app.datetime.datetime.now()
-        self.IP_SERVICE_REQUEST_URL = "http://ip.jsontest.com/"
+        self.IP_SERVICE_REQUEST_URL = "http://jsonplaceholder.typicode.com/posts/1"
         response=app.requests.get(self.IP_SERVICE_REQUEST_URL)
-        ip=app.json.loads(response.content)["ip"]
-        self.assertEqual(self.a.ip_address,ip)
+        ip=app.json.loads(response.content)["userId"]
+        self.assertEqual(self.a.user_id,ip)
         self.assertEqual(self.a.timestamp,init_timestamp)
-        self.assertEqual(self.a.initial_amount,2)
-        self.assertEqual(self.a.final_amount,4)
-        self.assertEqual(self.a.difference,0)
-        value=map(str,[init_timestamp, 
-                                  ip, 
-                                  2, 
-                                  4,
-                                  0])
-        
+        self.assertEqual(self.a.initial_amount,4)
+        self.assertEqual(self.a.final_amount,2)
+        self.assertEqual(self.a.difference,-2)
+        value="    ".join(map(str,[init_timestamp,ip,4,2,-2]))
         self.assertEqual(str(self.a),value)
-        '''
-
-    #TODO add_to_bank_account
-    '''def test_add_to_bank_account(self):
+        
+    def test_add_to_bank_account_positive(self):
+        self.held, sys.stdout = sys.stdout, StringIO()
         self.a=app.BankAccount(10)
+        original_raw_input = __builtins__.raw_input
+        __builtins__.raw_input = lambda _: '3'
         app.add_to_bank_account(self.a)
-        '''
-    # TODO mock rawimput
-    # TODO withdraw_from_bank_account
-    # TODO get_transaction_history
-    # TODO main?
+        __builtins__.raw_input = original_raw_input
+        self.assertEquals(sys.stdout.getvalue(),'Your account saldo is 13\n')
+        
+    def test_add_to_bank_account_positive(self):
+        self.held, sys.stdout = sys.stdout, StringIO()
+        self.a=app.BankAccount(10)
+        original_raw_input = __builtins__.raw_input
+        __builtins__.raw_input = lambda _: '3'
+        app.withdraw_from_bank_account(self.a)
+        __builtins__.raw_input = original_raw_input
+        self.assertEquals(sys.stdout.getvalue(),'Your account saldo is 7\n')
+
+    def test_get_transaction_history_empty(self):
+        self.held, sys.stdout = sys.stdout, StringIO()
+        self.a=app.BankAccount(10)
+        app.get_transaction_history(self.a)
+        self.assertEquals(sys.stdout.getvalue(),'No transactions found\n')
+
+    def test_get_transaction_history(self):
+        self.held, sys.stdout = sys.stdout, StringIO()
+        self.a=app.BankAccount(10)
+        self.a.withdraw(2)
+        self.a.withdraw(5)
+        beginning="ID   Timestamp    user Id  initial amount  final amount    difference\n"
+        content=beginning+""
+        for i, val in enumerate(self.a.transactions):
+            content=content+str(i+1)+"   "+str(self.a.transactions[i])+"\n"
+        app.get_transaction_history(self.a)
+        self.assertEquals(sys.stdout.getvalue(),content)
+        
         
 if __name__ == '__main__':
     unittest.main()
